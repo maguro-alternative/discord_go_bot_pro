@@ -4,7 +4,10 @@ go 1.20
 
 require github.com/bwmarrin/discordgo v0.27.1
 
-require github.com/pion/randutil v0.1.0 // indirect
+require (
+	github.com/google/uuid v1.3.1
+	github.com/pion/randutil v0.1.0 // indirect
+)
 
 require (
 	github.com/gorilla/websocket v1.4.2 // indirect
