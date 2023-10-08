@@ -72,7 +72,7 @@ func main() {
 			fmt.Println(err)
 		}
 
-		mux := router.NewRouter(indexDB)
+		mux := router.NewRouter(indexDB,discord)
 		log.Printf("Serving HTTP port: %s\n", port)
 		log.Fatal(http.ListenAndServe(port, mux))
 	}()
