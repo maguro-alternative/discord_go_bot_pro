@@ -54,12 +54,12 @@ func main() {
 	}
 
 	// ハンドラーの登録
-	botRouter.RegisterHandlers(discord, DB)
+	botRouter.RegisterHandlers(discord)
 
 	var commandHandlers []*botRouter.Handler
 	// 所属しているサーバすべてにスラッシュコマンドを追加する
 	// NewCommandHandlerの第二引数を空にすることで、グローバルでの使用を許可する
-	commandHandler := botRouter.NewCommandHandler(discord, "", DB)
+	commandHandler := botRouter.NewCommandHandler(discord, "")
 	// 追加したいコマンドをここに追加
 	commandHandler.CommandRegister(commands.PingCommand())
 	commandHandler.CommandRegister(commands.RecordCommand())

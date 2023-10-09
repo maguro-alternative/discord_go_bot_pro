@@ -3,7 +3,7 @@ package botRouter
 
 import (
 	"fmt"
-	"database/sql"
+	//"database/sql"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -22,23 +22,30 @@ type Handler struct {
 	session  *discordgo.Session
 	commands map[string]*Command
 	guild    string
-	db       *sql.DB
+	//db       *sql.DB
 }
 
 // ハンドラーの登録
-func RegisterHandlers(s *discordgo.Session, db *sql.DB) {
+func RegisterHandlers(
+	s *discordgo.Session,
+	//db *sql.DB,
+) {
 	fmt.Println(s.State.User.Username + "としてログインしました")
 	s.AddHandler(botHandler.OnMessageCreate)
 	s.AddHandler(botHandler.OnVoiceStateUpdate)
 }
 
 // スラッシュコマンドの作成
-func NewCommandHandler(session *discordgo.Session, guildID string, db *sql.DB) *Handler {
+func NewCommandHandler(
+	session *discordgo.Session,
+	guildID string,
+	//db *sql.DB,
+) *Handler {
 	return &Handler{
 		session:  session,
 		commands: make(map[string]*Command),
 		guild:    guildID,
-		db:       db,
+		//db:       db,
 	}
 }
 
