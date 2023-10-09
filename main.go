@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"database/sql"
 
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
 	"github.com/maguro-alternative/discord_go_bot/commands"
@@ -17,11 +18,26 @@ import (
 )
 
 // セッションの定義
-var discord *discordgo.Session
+var (
+	discord *discordgo.Session
+	DB *sql.DB
+	env *envconfig.Env
+	err error
+)
+
+func init(){
+	//Discordのセッションを作成
+	env, err = envconfig.NewEnv()
+
+	//dbPath := env.DatabaseURL
+	dbPath := env.DatabaseType + "://" + env.DatabaseHost + ":" + env.DatabasePort + "/" + env.DatabaseName + "?" + "user=" + env.DatabaseUser + "&" + "password=" + env.DatabasePassword + "&" + "sslmode=disable"
+	DB, err = db.NewPostgresDB(dbPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
 
 func main() {
-	//Discordのセッションを作成
-	env,err := envconfig.NewEnv()
 	Token := "Bot " + env.TOKEN //"Bot"という接頭辞がないと401 unauthorizedエラーが起きます
 	discord, err := discordgo.New(Token)
 
@@ -38,12 +54,12 @@ func main() {
 	}
 
 	// ハンドラーの登録
-	botRouter.RegisterHandlers(discord)
+	botRouter.RegisterHandlers(discord, DB)
 
 	var commandHandlers []*botRouter.Handler
 	// 所属しているサーバすべてにスラッシュコマンドを追加する
 	// NewCommandHandlerの第二引数を空にすることで、グローバルでの使用を許可する
-	commandHandler := botRouter.NewCommandHandler(discord, "")
+	commandHandler := botRouter.NewCommandHandler(discord, "", DB)
 	// 追加したいコマンドをここに追加
 	commandHandler.CommandRegister(commands.PingCommand())
 	commandHandler.CommandRegister(commands.RecordCommand())
@@ -57,22 +73,16 @@ func main() {
 	// ここでサーバーを起動すると、Ctrl+Cで終了するまでサーバーが起動し続ける
 	go func() {
 		const (
-			defaultPort   = ":8080"
+			defaultPort   = "8080"
 		)
 
 		port := env.ServerPort
 		if port == "" {
 			port = defaultPort
 		}
-		//dbPath := env.DatabaseURL
-		dbPath := env.DatabaseType + "://" + env.DatabaseHost + ":" + env.DatabasePort + "/" + env.DatabaseName + "?" + "user=" + env.DatabaseUser + "&" + "password=" + env.DatabasePassword + "&" + "sslmode=disable"
+		port = ":" + port
 
-		indexDB, err := db.NewPostgresDB(dbPath)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		mux := router.NewRouter(indexDB,discord)
+		mux := router.NewRouter(DB,discord)
 		log.Printf("Serving HTTP port: %s\n", port)
 		log.Fatal(http.ListenAndServe(port, mux))
 	}()

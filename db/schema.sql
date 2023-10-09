@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS guild_set_permissions (
     vc_role_id_permission NUMERIC[] NOT NULL DEFAULT '{}',
     webhook_permission NUMERIC NOT NULL DEFAULT 8,
     webhook_user_id_permission NUMERIC[] NOT NULL DEFAULT '{}',
-    webhook_role_id_permission NUMERIC[] NOT NULL DEFAULT '{}',
+    webhook_role_id_permission NUMERIC[] NOT NULL DEFAULT '{}'
 );
 
 CREATE TABLE IF NOT EXISTS line_bot (
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS line_bot (
     line_client_id BYTEA NOT NULL DEFAULT '',
     line_client_secret BYTEA NOT NULL DEFAULT '',
     default_channel_id NUMERIC NOT NULL DEFAULT 0,
-    debug_mode BOOLEAN NOT NULL DEFAULT FALSE,
+    debug_mode BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS guilds_line_channel (
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS guilds_line_channel (
     line_ng_channel BOOLEAN NOT NULL DEFAULT FALSE,
     ng_message_types VARCHAR(50)[] NOT NULL DEFAULT '{}',
     message_bot BOOLEAN NOT NULL DEFAULT True,
-    ng_users NUMERIC[] NOT NULL DEFAULT '{}',
+    ng_users NUMERIC[] NOT NULL DEFAULT '{}'
 );
 
 CREATE TABLE IF NOT EXISTS guilds_vc_signal (
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS guilds_vc_signal (
     send_channel_id NUMERIC NOT NULL DEFAULT 0,
     join_bot BOOLEAN NOT NULL DEFAULT True,
     everyone_mention BOOLEAN NOT NULL DEFAULT True,
-    mention_role_ids NUMERIC[] NOT NULL DEFAULT '{}',
+    mention_role_ids NUMERIC[] NOT NULL DEFAULT '{}'
 );
 
 CREATE TABLE IF NOT EXISTS webhook (
@@ -59,5 +59,5 @@ CREATE TABLE IF NOT EXISTS webhook (
     search_and_words VARCHAR(50)[] NOT NULL DEFAULT '{}',
     mention_or_words VARCHAR(50)[] NOT NULL DEFAULT '{}',
     mention_and_words VARCHAR(50)[] NOT NULL DEFAULT '{}',
-    create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-)
+    create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
