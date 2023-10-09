@@ -1,13 +1,14 @@
 package commands
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
 )
 
-func PingCommand() *botRouter.Command {
+func PingCommand(db *sql.DB) *botRouter.Command {
 	/*
 		pingコマンドの定義
 
@@ -15,15 +16,16 @@ func PingCommand() *botRouter.Command {
 		説明: Pong!
 		オプション: なし
 	*/
+	exec := NewSqlDB(db)
 	return &botRouter.Command{
 		Name:        "ping",
 		Description: "Pong!",
 		Options:     []*discordgo.ApplicationCommandOption{},
-		Executor:    handlePing,
+		Executor:    exec.handlePing,
 	}
 }
 
-func handlePing(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (h *commandHandlerDB) handlePing(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	/*
 		pingコマンドの実行
 

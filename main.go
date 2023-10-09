@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"database/sql"
 
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
 	"github.com/maguro-alternative/discord_go_bot/commands"
@@ -20,24 +19,19 @@ import (
 // セッションの定義
 var (
 	discord *discordgo.Session
-	DB *sql.DB
-	env *envconfig.Env
-	err error
 )
 
-func init(){
+
+func main() {
 	//Discordのセッションを作成
-	env, err = envconfig.NewEnv()
+	env, err := envconfig.NewEnv()
 
 	//dbPath := env.DatabaseURL
 	dbPath := env.DatabaseType + "://" + env.DatabaseHost + ":" + env.DatabasePort + "/" + env.DatabaseName + "?" + "user=" + env.DatabaseUser + "&" + "password=" + env.DatabasePassword + "&" + "sslmode=disable"
-	DB, err = db.NewPostgresDB(dbPath)
+	db, err := db.NewPostgresDB(dbPath)
 	if err != nil {
 		fmt.Println(err)
 	}
-}
-
-func main() {
 	Token := "Bot " + env.TOKEN //"Bot"という接頭辞がないと401 unauthorizedエラーが起きます
 	discord, err := discordgo.New(Token)
 
@@ -54,16 +48,16 @@ func main() {
 	}
 
 	// ハンドラーの登録
-	botRouter.RegisterHandlers(discord)
+	botRouter.RegisterHandlers(discord, db)
 
 	var commandHandlers []*botRouter.Handler
 	// 所属しているサーバすべてにスラッシュコマンドを追加する
 	// NewCommandHandlerの第二引数を空にすることで、グローバルでの使用を許可する
 	commandHandler := botRouter.NewCommandHandler(discord, "")
 	// 追加したいコマンドをここに追加
-	commandHandler.CommandRegister(commands.PingCommand())
-	commandHandler.CommandRegister(commands.RecordCommand())
-	commandHandler.CommandRegister(commands.DisconnectCommand())
+	commandHandler.CommandRegister(commands.PingCommand(db))
+	commandHandler.CommandRegister(commands.RecordCommand(db))
+	commandHandler.CommandRegister(commands.DisconnectCommand(db))
 	commandHandlers = append(commandHandlers, commandHandler)
 
 	fmt.Println("Discordに接続しました。")
@@ -82,7 +76,7 @@ func main() {
 		}
 		port = ":" + port
 
-		mux := router.NewRouter(DB,discord)
+		mux := router.NewRouter(db,discord)
 		log.Printf("Serving HTTP port: %s\n", port)
 		log.Fatal(http.ListenAndServe(port, mux))
 	}()

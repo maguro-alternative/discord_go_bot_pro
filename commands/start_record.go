@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/pion/webrtc/v3/pkg/media/oggwriter"
 )
 
-func RecordCommand() *botRouter.Command {
+func RecordCommand(db *sql.DB) *botRouter.Command {
 	/*
 		start_recordコマンドの定義
 
@@ -20,11 +21,12 @@ func RecordCommand() *botRouter.Command {
 		説明: 録音を開始します
 		オプション: なし
 	*/
+	exec := NewSqlDB(db)
 	return &botRouter.Command{
 		Name:        "test_start_record",
 		Description: "録音を開始します",
 		Options:     []*discordgo.ApplicationCommandOption{},
-		Executor:    recordVoice,
+		Executor:    exec.recordVoice,
 	}
 }
 
@@ -73,7 +75,7 @@ func handleVoice(c chan *discordgo.Packet) {
 	}
 }
 
-func recordVoice(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (h *commandHandlerDB) recordVoice(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	/*
 		録音の開始
 
@@ -105,18 +107,4 @@ func recordVoice(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		}()
 		handleVoice(v.OpusRecv)
 	}
-}
-
-func responsText(s *discordgo.Session, i *discordgo.InteractionCreate, contentText string) error {
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: contentText,
-		},
-	})
-	if err != nil {
-		fmt.Printf("error responding to record command: %v\n", err)
-		return err
-	}
-	return nil
 }

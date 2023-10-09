@@ -1,12 +1,14 @@
 package commands
 
 import (
+	"database/sql"
+
 	"github.com/bwmarrin/discordgo"
 
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
 )
 
-func DisconnectCommand() *botRouter.Command {
+func DisconnectCommand(db *sql.DB) *botRouter.Command {
 	/*
 		disconnectコマンドの定義
 
@@ -14,15 +16,16 @@ func DisconnectCommand() *botRouter.Command {
 		説明: 接続中のボイスチャンネルから切断します
 		オプション: なし
 	*/
+	exec := NewSqlDB(db)
 	return &botRouter.Command{
 		Name:        "test_disconnect",
 		Description: "接続中のボイスチャンネルから切断します",
 		Options:     []*discordgo.ApplicationCommandOption{},
-		Executor:    disconnectVoiceChannel,
+		Executor:    exec.disconnectVoiceChannel,
 	}
 }
 
-func disconnectVoiceChannel(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (h *commandHandlerDB) disconnectVoiceChannel(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	/*
 		test_disconnectコマンドの実行
 

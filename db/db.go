@@ -12,15 +12,10 @@ import (
 //go:embed schema.sql
 var schema string // schema.sqlの内容をschemaに代入
 
-var DB *sql.DB	// DBは*sql.DB型の変数、グローバル変数
-var err error
+var db *sql.DB	// DBは*sql.DB型の変数、グローバル変数
 
-type Tx struct {
-	*sql.Tx
-}
-
-type Stmt struct {
-	*sql.Stmt
+type DBHandler struct {
+	db *sql.DB
 }
 
 // NewDB returns go-sqlite3 driver based *sql.DB.
@@ -39,7 +34,7 @@ func NewSqliteDB(path string) (*sql.DB, error) {
 
 func NewPostgresDB(path string) (*sql.DB, error) {
 	// データベースに接続
-	DB, err = sql.Open("postgres", path)
+	db, err := sql.Open("postgres", path)
 	if err != nil {
 		return nil, err
 	}
@@ -49,12 +44,18 @@ func NewPostgresDB(path string) (*sql.DB, error) {
 		//return nil, err
 	//}
 
-	return DB, nil
+	return db, nil
+}
+
+func NewDBHandler(db *sql.DB) *DBHandler {
+	return &DBHandler{
+		db: db,
+	}
 }
 
 // データベースの接続を確認
 func PingDB() error {
-	if err := DB.Ping(); err != nil {
+	if err := db.Ping(); err != nil {
 		return err
 	}
 	return nil
@@ -62,7 +63,7 @@ func PingDB() error {
 
 // テーブル一覧の確認
 func TablesCheck() (sql.Result, error) {
-	results, err := DB.Exec("select schemaname, tablename, tableowner from pg_tables;");
+	results, err := db.Exec("select schemaname, tablename, tableowner from pg_tables;");
 	if err != nil {
 		return nil, err
 	}

@@ -2,12 +2,13 @@
 package botRouter
 
 import (
+	"database/sql"
 	"fmt"
-	//"database/sql"
+
+	//"github.com/maguro-alternative/discord_go_bot/db"
+	botHandler "github.com/maguro-alternative/discord_go_bot/bot_handler"
 
 	"github.com/bwmarrin/discordgo"
-
-	"github.com/maguro-alternative/discord_go_bot/bot_handler"
 )
 
 /*
@@ -28,11 +29,12 @@ type Handler struct {
 // ハンドラーの登録
 func RegisterHandlers(
 	s *discordgo.Session,
-	//db *sql.DB,
+	sqldb *sql.DB,
 ) {
+	hdb := botHandler.NewSqlDB(sqldb)
 	fmt.Println(s.State.User.Username + "としてログインしました")
-	s.AddHandler(botHandler.OnMessageCreate)
-	s.AddHandler(botHandler.OnVoiceStateUpdate)
+	s.AddHandler(hdb.OnMessageCreate)
+	s.AddHandler(hdb.OnVoiceStateUpdate)
 }
 
 // スラッシュコマンドの作成
@@ -62,9 +64,9 @@ func (h *Handler) CommandRegister(command *Command) error {
 			//ID:            command.AppCommand.ID,
 			ApplicationID: h.session.State.User.ID,
 			//GuildID:       h.guild,
-			Name:          command.Name,
-			Description:   command.Description,
-			Options:       command.Options,
+			Name:        command.Name,
+			Description: command.Description,
+			Options:     command.Options,
 		},
 	)
 
