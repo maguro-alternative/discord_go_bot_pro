@@ -2,7 +2,7 @@
 discordgoを使った多機能Bot+サーバーサイドのテンプレートです。  
 httpサーバーの立ち上げ、各機能のハンドラーの登録、コマンドの登録などができます。  
 また、データベースにはPostgreSQLを使っていますが、sqlite3に変更することもできます。  
-OAuth2の認証もできます。
+~~OAuth2の認証もできます。~~(実装中です)
 # 使い方
 本リポジトリをクローンして、以下のコマンドを実行してください。
 ```bash
@@ -151,3 +151,60 @@ func RegisterHandlers(s *discordgo.Session) {
 
 以下のような画像のように、ボイスチャンネルのステータスを受け取れていれば成功です。
 ![](./image/vcstatestest.png)
+
+# データベースの扱い方
+```db```パッケージにデータベースの接続を行う関数があります。  
+```DB```はグローバルで宣言しているので、importすればどこでも使用可能です。
+```db```パッケージの```db.go```を参照してください。
+
+<details>
+<summary>サンプルコード</summary>
+
+```db```フォルダ内の```schema.sql```は、データベース接続時に自動で実行されます。
+(構文エラーがあると、接続自体ができなくなるので注意してください。)
+```sql:schema.sql
+CREATE TABLE IF NOT EXISTS todo (
+	id SERIAL PRIMARY KEY,
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+```"github.com/maguro-alternative/discord_go_bot/db"```をimportすることで、ハンドラー内でもデータベースの操作が可能です。
+
+```go:message_create.go
+// messageCreate.go
+package botHandler
+
+import (
+	"fmt"
+
+    "github.com/maguro-alternative/discord_go_bot/db"
+
+	"github.com/bwmarrin/discordgo"
+)
+
+func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+    // メッセージが作成されたときに実行する処理
+	//u := m.Author
+
+    fmt.Println(m.Content)
+    err := db.PingDB()
+    if err != nil {
+		fmt.Println(err)
+	}
+    table, err := db.TablesCheck()
+	if err != nil {
+		fmt.Println(err)
+	}
+    fmt.Println(table)
+
+    if(m.Author.Bot == false){
+        s.ChannelMessageSend(m.ChannelID, m.Content)
+    }
+}
+```
+
+</details>
