@@ -1,13 +1,18 @@
 package commands
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/maguro-alternative/discord_go_bot/db"
+)
+
 
 type commandHandlerDB struct {
-	db *sql.DB
+	db *db.DBHandler
 }
 
-func NewSqlDB(db *sql.DB) *commandHandlerDB {
+func NewSqlDB(dbSql *sql.DB) *commandHandlerDB {
 	return &commandHandlerDB{
-		db: db,
+		db: db.NewDBHandler(dbSql),
 	}
 }

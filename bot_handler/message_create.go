@@ -14,15 +14,16 @@ func (h *botHandlerDB) OnMessageCreate(s *discordgo.Session, m *discordgo.Messag
 	//u := m.Author
 
 	fmt.Println(m.Content)
-	err := h.db.Ping()
+	fmt.Printf("(%%v)  %v\n", h.db)
+	err := h.db.DBPing()
 	if err != nil {
 		fmt.Println(err)
 	}
-	//table, err := h.db.Ping()//TablesCheck()
+	table, err := h.db.CheckTables()
 	if err != nil {
 		fmt.Println(err)
 	}
-	//fmt.Println(table)
+	fmt.Println(table)
 
 	if m.Author.Bot == false {
 		s.ChannelMessageSend(m.ChannelID, m.Content)

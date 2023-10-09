@@ -15,7 +15,9 @@ var schema string // schema.sqlの内容をschemaに代入
 var db *sql.DB	// DBは*sql.DB型の変数、グローバル変数
 
 type DBHandler struct {
-	db *sql.DB
+	Driver      *sql.DB
+	DBPing      func() error
+	CheckTables func() (sql.Result, error)
 }
 
 // NewDB returns go-sqlite3 driver based *sql.DB.
@@ -48,24 +50,25 @@ func NewPostgresDB(path string) (*sql.DB, error) {
 }
 
 func NewDBHandler(db *sql.DB) *DBHandler {
+	// データベースの接続を確認
+	PingDB := func () error{
+		if err := db.Ping(); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// テーブル一覧の確認
+	TablesCheck := func() (sql.Result, error) {
+		results, err := db.Exec("select schemaname, tablename, tableowner from pg_tables;");
+		if err != nil {
+			return nil, err
+		}
+		return results, nil
+	}
 	return &DBHandler{
-		db: db,
+		Driver: db,
+		DBPing: PingDB,
+		CheckTables: TablesCheck,
 	}
-}
-
-// データベースの接続を確認
-func PingDB() error {
-	if err := db.Ping(); err != nil {
-		return err
-	}
-	return nil
-}
-
-// テーブル一覧の確認
-func TablesCheck() (sql.Result, error) {
-	results, err := db.Exec("select schemaname, tablename, tableowner from pg_tables;");
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
 }

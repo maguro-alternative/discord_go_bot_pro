@@ -10,7 +10,7 @@ import (
 
 func (h *botHandlerDB) OnVoiceStateUpdate(s *discordgo.Session, vs *discordgo.VoiceStateUpdate) {
 	fmt.Print("hoge")
-	err := h.db.Ping()
+	err := h.db.DBPing()
 	if err != nil {
 		fmt.Println(err)
 	}

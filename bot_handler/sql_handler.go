@@ -2,14 +2,16 @@ package botHandler
 
 import (
 	"database/sql"
+
+	"github.com/maguro-alternative/discord_go_bot/db"
 )
 
 type botHandlerDB struct {
-	db *sql.DB
+	db *db.DBHandler
 }
 
-func NewSqlDB(db *sql.DB) *botHandlerDB {
+func NewSqlDB(dbSql *sql.DB) *botHandlerDB {
 	return &botHandlerDB{
-		db: db,
+		db: db.NewDBHandler(dbSql),
 	}
 }
