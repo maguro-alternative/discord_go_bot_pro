@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"fmt"
 	"time"
 
@@ -13,7 +13,7 @@ import (
 	"github.com/pion/webrtc/v3/pkg/media/oggwriter"
 )
 
-func RecordCommand(db *sql.DB) *botRouter.Command {
+func RecordCommand(db *sqlx.DB) *botRouter.Command {
 	/*
 		start_recordコマンドの定義
 

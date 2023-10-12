@@ -1,11 +1,10 @@
 package db
 
 import (
-	"database/sql"
 	"context"
 	_ "embed"
 
-	//"github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -13,17 +12,17 @@ import (
 //go:embed schema.sql
 var schema string // schema.sqlの内容をschemaに代入
 
-var db *sql.DB // DBは*sql.DB型の変数、グローバル変数
+var db *sqlx.DB // DBは*sql.DB型の変数、グローバル変数
 
 type DBHandler struct {
-	Driver      *sql.DB
+	Driver      *sqlx.DB
 	DBPing      func(context.Context) error
-	CheckTables func(context.Context) (sql.Result, error)
+	CheckTables func(context.Context) (any, error)
 }
 
 // NewDB returns go-sqlite3 driver based *sql.DB.
-func NewSqliteDB(path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", path)
+func NewSqliteDB(path string) (*sqlx.DB, error) {
+	db, err := sqlx.Open("sqlite3", path)
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +34,9 @@ func NewSqliteDB(path string) (*sql.DB, error) {
 	return db, nil
 }
 
-func NewPostgresDB(path string) (*sql.DB, error) {
+func NewPostgresDB(path string) (*sqlx.DB, error) {
 	// データベースに接続
-	db, err := sql.Open("postgres", path)
+	db, err := sqlx.Open("postgres", path)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +49,7 @@ func NewPostgresDB(path string) (*sql.DB, error) {
 	return db, nil
 }
 
-func NewDBHandler(db *sql.DB) *DBHandler {
+func NewDBHandler(db *sqlx.DB) *DBHandler {
 	/*
 		データベースで行う処理をまとめた構造体を返す
 
@@ -69,7 +68,7 @@ func NewDBHandler(db *sql.DB) *DBHandler {
 	}
 
 	// テーブル一覧の確認
-	TablesCheck := func(ctx context.Context) (sql.Result, error) {
+	TablesCheck := func(ctx context.Context) (any, error) {
 		results, err := db.ExecContext(ctx, "select schemaname, tablename, tableowner from pg_tables;")
 		if err != nil {
 			return nil, err

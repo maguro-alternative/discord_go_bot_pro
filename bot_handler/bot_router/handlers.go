@@ -2,7 +2,7 @@
 package botRouter
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"fmt"
 
 	//"github.com/maguro-alternative/discord_go_bot/db"
@@ -29,9 +29,9 @@ type Handler struct {
 // ハンドラーの登録
 func RegisterHandlers(
 	s *discordgo.Session,
-	sqldb *sql.DB,
+	sqlxdb *sqlx.DB,
 ) {
-	hdb := botHandler.NewSqlDB(sqldb)
+	hdb := botHandler.NewSqlDB(sqlxdb)
 	fmt.Println(s.State.User.Username + "としてログインしました")
 	s.AddHandler(hdb.OnMessageCreate)
 	s.AddHandler(hdb.OnVoiceStateUpdate)

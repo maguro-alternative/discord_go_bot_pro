@@ -1,7 +1,7 @@
 package router
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"net/http"
 
 
@@ -11,7 +11,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func NewRouter(indexDB *sql.DB, discordSession *discordgo.Session) *http.ServeMux {
+func NewRouter(indexDB *sqlx.DB, discordSession *discordgo.Session) *http.ServeMux {
 	// create a *service.TODOService type variable using the *sql.DB type variable
 	var indexService = service.NewIndexService(indexDB,discordSession)
 

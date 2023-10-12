@@ -1,14 +1,14 @@
 package commands
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/bwmarrin/discordgo"
 
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
 )
 
-func DisconnectCommand(db *sql.DB) *botRouter.Command {
+func DisconnectCommand(db *sqlx.DB) *botRouter.Command {
 	/*
 		disconnectコマンドの定義
 

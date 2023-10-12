@@ -1,14 +1,14 @@
 package commands
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
 )
 
-func PingCommand(db *sql.DB) *botRouter.Command {
+func PingCommand(db *sqlx.DB) *botRouter.Command {
 	/*
 		pingコマンドの定義
 
