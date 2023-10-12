@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	_ "embed"
 
 	"github.com/jmoiron/sqlx"
@@ -15,9 +16,14 @@ var schema string // schema.sqlの内容をschemaに代入
 var db *sqlx.DB // DBは*sql.DB型の変数、グローバル変数
 
 type DBHandler struct {
-	Driver      *sqlx.DB
-	DBPing      func(context.Context) error
-	CheckTables func(context.Context) (any, error)
+	Driver           *sqlx.DB
+	DBPing           func(context.Context) error
+	CheckTables      func(context.Context) (any, error)
+	QueryxContext    func(context.Context, string, ...interface{}) (*sqlx.Rows, error)
+	QueryRowxContent func(context.Context, string, ...interface{}) (*sqlx.Row, error)
+	GetContent       func(context.Context, interface{}, string, ...interface{}) error
+	SelectContent    func(context.Context, interface{}, string, ...interface{}) error
+	ExecContext      func(ctx context.Context, query string, args ...any) (*sql.Result, error)
 }
 
 // NewDB returns go-sqlite3 driver based *sql.DB.
@@ -76,9 +82,55 @@ func NewDBHandler(db *sqlx.DB) *DBHandler {
 		return results, nil
 	}
 
+	// QueryxContextは複数の行を返す
+	QueryxContext := func(ctx context.Context, query string, args ...interface{}) (*sqlx.Rows, error) {
+		results, err := db.QueryxContext(ctx, query, args...)
+		if err != nil {
+			return nil, err
+		}
+		return results, nil
+	}
+
+	// QueryRowxContextは1行を返す
+	QueryRowxContent := func(ctx context.Context, query string, args ...interface{}) (*sqlx.Row, error) {
+		results := db.QueryRowxContext(ctx, query, args...)
+		return results, nil
+	}
+
+	// GetContentは1行を返す
+	GetContent := func(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+		err := db.GetContext(ctx, dest, query, args...)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// SelectContentは複数の行を返す
+	SelectContent := func(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+		err := db.SelectContext(ctx, dest, query, args...)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	ExecContext := func(ctx context.Context, query string, args ...any) (*sql.Result, error) {
+		results, err := db.ExecContext(ctx, query, args...)
+		if err != nil {
+			return nil, err
+		}
+		return &results, nil
+	}
+
 	return &DBHandler{
-		Driver:      db,
-		DBPing:      PingDB,
-		CheckTables: TablesCheck,
+		Driver:           db,
+		DBPing:           PingDB,
+		CheckTables:      TablesCheck,
+		QueryxContext:    QueryxContext,
+		QueryRowxContent: QueryRowxContent,
+		GetContent:       GetContent,
+		SelectContent:    SelectContent,
+		ExecContext:      ExecContext,
 	}
 }
