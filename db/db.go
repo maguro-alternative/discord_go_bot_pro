@@ -18,7 +18,7 @@ var db *sqlx.DB // DBは*sql.DB型の変数、グローバル変数
 type DBHandler struct {
 	Driver           *sqlx.DB
 	DBPing           func(context.Context) error
-	CheckTables      func(context.Context) (any, error)
+	CheckTables      func(context.Context) (sql.Result, error)
 	QueryxContext    func(context.Context, string, ...interface{}) (*sqlx.Rows, error)
 	QueryRowxContent func(context.Context, string, ...interface{}) (*sqlx.Row, error)
 	GetContent       func(context.Context, interface{}, string, ...interface{}) error
@@ -74,7 +74,7 @@ func NewDBHandler(db *sqlx.DB) *DBHandler {
 	}
 
 	// テーブル一覧の確認
-	TablesCheck := func(ctx context.Context) (any, error) {
+	TablesCheck := func(ctx context.Context) (sql.Result, error) {
 		results, err := db.ExecContext(ctx, "select schemaname, tablename, tableowner from pg_tables;")
 		if err != nil {
 			return nil, err
