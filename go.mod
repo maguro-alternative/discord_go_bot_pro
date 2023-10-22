@@ -9,6 +9,7 @@ require (
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/getsentry/sentry-go v0.18.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -24,6 +25,7 @@ require (
 require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/cockroachdb/errors v1.11.1
+	github.com/gorilla/sessions v1.2.1
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.5.1

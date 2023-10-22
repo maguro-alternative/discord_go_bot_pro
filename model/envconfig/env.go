@@ -16,6 +16,7 @@ type Env struct {
 	DatabaseHost     string
 	DatabasePort     string
 	ServerPort       string
+	SessionsSecret   string
 }
 
 func NewEnv() (*Env, error) {
@@ -34,5 +35,6 @@ func NewEnv() (*Env, error) {
 		DatabaseHost:     os.Getenv("PGHOST"),
 		DatabasePort:     os.Getenv("PGPORT"),
 		ServerPort:       os.Getenv("PORT"),
+		SessionsSecret:   os.Getenv("SESSIONS_SECRET"),
 	}, nil
 }

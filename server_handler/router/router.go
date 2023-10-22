@@ -1,19 +1,24 @@
 package router
 
 import (
-	"github.com/jmoiron/sqlx"
 	"net/http"
 
+	"github.com/jmoiron/sqlx"
 
-	"github.com/maguro-alternative/discord_go_bot/server_handler"
+	serverHandler "github.com/maguro-alternative/discord_go_bot/server_handler"
 	"github.com/maguro-alternative/discord_go_bot/service"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/gorilla/sessions"
 )
 
-func NewRouter(indexDB *sqlx.DB, discordSession *discordgo.Session) *http.ServeMux {
+func NewRouter(
+	indexDB *sqlx.DB,
+	sessionStore *sessions.CookieStore,
+	discordSession *discordgo.Session,
+) *http.ServeMux {
 	// create a *service.TODOService type variable using the *sql.DB type variable
-	var indexService = service.NewIndexService(indexDB,discordSession)
+	var indexService = service.NewIndexService(indexDB, sessionStore, discordSession)
 
 	// register routes
 	mux := http.NewServeMux()
