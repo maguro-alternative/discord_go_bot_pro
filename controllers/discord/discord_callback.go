@@ -73,6 +73,7 @@ func (h *DiscordCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	}
 	// セッションに保存
 	session.Values["discord_user"] = user
+	session.Save(r, w)
 	//log.Println(user)
 	// 4. ユーザー情報をDBに保存
 	//h.svc.CreateUser(user)
