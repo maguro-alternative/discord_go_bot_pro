@@ -10,19 +10,19 @@ import (
 // A TODOService implements CRUD of TODO entities.
 type IndexService struct {
 	db             *sqlx.DB
-	SessionStore   *sessions.CookieStore
+	Session        *sessions.Session
 	DiscordSession *discordgo.Session
 }
 
 // NewTODOService returns new TODOService.
 func NewIndexService(
 	db *sqlx.DB,
-	sessionStore *sessions.CookieStore,
+	session *sessions.Session,
 	discordSession *discordgo.Session,
 ) *IndexService {
 	return &IndexService{
 		db:             db,
-		SessionStore:   sessionStore,
+		Session:        session,
 		DiscordSession: discordSession,
 	}
 }

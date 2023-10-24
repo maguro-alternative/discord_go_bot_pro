@@ -16,11 +16,11 @@ import (
 
 func NewRouter(
 	indexDB *sqlx.DB,
-	sessionStore *sessions.CookieStore,
+	session *sessions.Session,
 	discordSession *discordgo.Session,
 ) *http.ServeMux {
 	// create a *service.TODOService type variable using the *sql.DB type variable
-	var indexService = service.NewIndexService(indexDB, sessionStore, discordSession)
+	var indexService = service.NewIndexService(indexDB, session, discordSession)
 
 	// register routes
 	mux := http.NewServeMux()

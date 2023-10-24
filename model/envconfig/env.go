@@ -21,6 +21,7 @@ type Env struct {
 	DiscordSecret    string
 	FrontUrl         string
 	ServerUrl        string
+	SessionsName     string
 }
 
 func NewEnv() (*Env, error) {
@@ -44,5 +45,6 @@ func NewEnv() (*Env, error) {
 		DiscordSecret:    os.Getenv("DISCORD_SECRET"),
 		FrontUrl:         os.Getenv("FRONT_URL"),
 		ServerUrl:        os.Getenv("SERVER_URL"),
+		SessionsName:     os.Getenv("SESSIONS_NAME"),
 	}, nil
 }
