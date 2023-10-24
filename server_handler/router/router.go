@@ -7,9 +7,11 @@ import (
 
 	serverHandler "github.com/maguro-alternative/discord_go_bot/server_handler"
 	"github.com/maguro-alternative/discord_go_bot/service"
+	"github.com/maguro-alternative/discord_go_bot/server_handler/middleware"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/gorilla/sessions"
+	"github.com/justinas/alice"
 )
 
 func NewRouter(
@@ -22,7 +24,8 @@ func NewRouter(
 
 	// register routes
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", serverHandler.NewIndexHandler(indexService).ServeHTTP)
+	middleChain := alice.New(middleware.CORS)
+	mux.Handle("/", middleChain.Then(serverHandler.NewIndexHandler(indexService)))
 	//mux.HandleFunc("/todos", handler.NewTODOHandler(todoService).ServeHTTP)
 	return mux
 }
