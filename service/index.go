@@ -1,6 +1,8 @@
 package service
 
 import (
+	"github.com/maguro-alternative/discord_go_bot/model/envconfig"
+
 	"github.com/jmoiron/sqlx"
 
 	"github.com/bwmarrin/discordgo"
@@ -10,19 +12,22 @@ import (
 // A TODOService implements CRUD of TODO entities.
 type IndexService struct {
 	db             *sqlx.DB
-	Session        *sessions.Session
+	CookieStore    *sessions.CookieStore
 	DiscordSession *discordgo.Session
+	Env            *envconfig.Env
 }
 
 // NewTODOService returns new TODOService.
 func NewIndexService(
 	db *sqlx.DB,
-	session *sessions.Session,
+	cookieStore *sessions.CookieStore,
 	discordSession *discordgo.Session,
+	env *envconfig.Env,
 ) *IndexService {
 	return &IndexService{
 		db:             db,
-		Session:        session,
+		CookieStore:    cookieStore,
 		DiscordSession: discordSession,
+		Env:            env,
 	}
 }

@@ -30,7 +30,7 @@ func main() {
 		panic(err)
 	}
 	var store = sessions.NewCookieStore([]byte(env.SessionsSecret))
-	var session = sessions.NewSession(store, env.SessionsName)
+	//var session = sessions.NewSession(store, env.SessionsName)
 
 	//dbPath := env.DatabaseURL
 	dbPath := env.DatabaseType + "://" + env.DatabaseHost + ":" + env.DatabasePort + "/" + env.DatabaseName + "?" + "user=" + env.DatabaseUser + "&" + "password=" + env.DatabasePassword + "&" + "sslmode=disable"
@@ -82,7 +82,12 @@ func main() {
 		}
 		port = ":" + port
 
-		mux := router.NewRouter(db,session,discord)
+		mux := router.NewRouter(
+			db,
+			store,
+			discord,
+			env,
+		)
 		log.Printf("Serving HTTP port: %s\n", port)
 		log.Fatal(http.ListenAndServe(port, mux))
 	}()

@@ -1,4 +1,4 @@
-package discord_model
+package discordModel
 
 type DiscordUser struct {
 	ID               string `json:"id"`
@@ -11,7 +11,7 @@ type DiscordUser struct {
 	PublicFlags      int    `json:"public_flags"`
 	Flags            int    `json:"flags"`
 	Banner           string `json:"banner"`
-	BannerColor      int    `json:"banner_color"`
+	BannerColor      string `json:"banner_color"`
 	AccentColor      int    `json:"accent_color"`
 	Locale           string `json:"locale"`
 	MfaEnabled       bool   `json:"mfa_enabled"`
