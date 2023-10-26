@@ -56,7 +56,7 @@ func NewEnv() (*Env, error) {
 		DatabasePassword: os.Getenv("PGPASSWORD"),
 		DatabaseHost:     os.Getenv("PGHOST"),
 		DatabasePort:     os.Getenv("PGPORT"),
-		ServerPort:       os.Getenv("SERVER_PORT"),
+		ServerPort:       os.Getenv("PORT"),
 		SessionsSecret:   os.Getenv("SESSIONS_SECRET"),
 		DiscordClientID:  os.Getenv("DISCORD_CLIENT_ID"),
 		DiscordSecret:    os.Getenv("DISCORD_CLIENT_SECRET"),
