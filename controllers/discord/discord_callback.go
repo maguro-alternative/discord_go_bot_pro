@@ -81,5 +81,5 @@ func (h *DiscordCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	// 5. ログイン処理
 	//h.svc.Login(w, r, user)
 	// 6. ログイン後のページに遷移
-	http.Redirect(w, r, h.svc.Env.FrontUrl, http.StatusFound)
+	http.Redirect(w, r, h.svc.Env.FrontUrl + "/test-user", http.StatusFound)
 }
