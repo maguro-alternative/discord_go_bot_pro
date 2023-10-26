@@ -10,18 +10,17 @@ import (
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
 	"github.com/maguro-alternative/discord_go_bot/commands"
 	"github.com/maguro-alternative/discord_go_bot/db"
-	"github.com/maguro-alternative/discord_go_bot/server_handler/router"
 	"github.com/maguro-alternative/discord_go_bot/model/envconfig"
+	"github.com/maguro-alternative/discord_go_bot/server_handler/router"
 
-	"github.com/gorilla/sessions"
 	"github.com/bwmarrin/discordgo"
+	"github.com/gorilla/sessions"
 )
 
 // セッションの定義
 var (
 	discord *discordgo.Session
 )
-
 
 func main() {
 	//Discordのセッションを作成
@@ -30,6 +29,14 @@ func main() {
 		panic(err)
 	}
 	var store = sessions.NewCookieStore([]byte(env.SessionsSecret))
+	store.Options = &sessions.Options{
+		Path:     "/",
+		Domain:   env.CookieDomain,
+		MaxAge:   86400 * 7,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
+	}
 	//var session = sessions.NewSession(store, env.SessionsName)
 
 	//dbPath := env.DatabaseURL
@@ -73,7 +80,7 @@ func main() {
 	// ここでサーバーを起動すると、Ctrl+Cで終了するまでサーバーが起動し続ける
 	go func() {
 		const (
-			defaultPort   = "8080"
+			defaultPort = "8080"
 		)
 
 		port := env.ServerPort

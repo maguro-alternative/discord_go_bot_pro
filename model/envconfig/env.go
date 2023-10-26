@@ -32,6 +32,7 @@ type Env struct {
 	FrontUrl         string
 	ServerUrl        string
 	SessionsName     string
+	CookieDomain     string
 }
 
 func NewEnv() (*Env, error) {
@@ -43,7 +44,7 @@ func NewEnv() (*Env, error) {
 			}
 			return errors.WithStack(err)
 		}
-		return retryOperation(ctx,func() error { return operation() })
+		return retryOperation(ctx, func() error { return operation() })
 	}
 	err := EnvGet(context.Background())
 	if err != nil {
@@ -66,6 +67,7 @@ func NewEnv() (*Env, error) {
 		FrontUrl:         os.Getenv("FRONT_URL"),
 		ServerUrl:        os.Getenv("SERVER_URL"),
 		SessionsName:     os.Getenv("SESSIONS_NAME"),
+		CookieDomain:     os.Getenv("COOKIE_DOMAIN"),
 	}, nil
 }
 
