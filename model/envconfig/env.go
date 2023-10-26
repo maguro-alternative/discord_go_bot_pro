@@ -38,6 +38,9 @@ func NewEnv() (*Env, error) {
 	EnvGet := func(ctx context.Context) error {
 		operation := func() error {
 			err := godotenv.Load(".env")
+			if err.Error() == "open .env: no such file or directory" {
+				return nil
+			}
 			return errors.WithStack(err)
 		}
 		return retryOperation(ctx,func() error { return operation() })
