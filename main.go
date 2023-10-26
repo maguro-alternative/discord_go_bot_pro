@@ -31,7 +31,7 @@ func main() {
 	var store = sessions.NewCookieStore([]byte(env.SessionsSecret))
 	store.Options = &sessions.Options{
 		Path:     "/",
-		Domain:   env.CookieDomain,
+		//Domain:   env.CookieDomain,
 		MaxAge:   86400 * 7,
 		HttpOnly: true,
 		Secure:   true,
