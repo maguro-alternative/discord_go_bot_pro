@@ -33,9 +33,10 @@ func main() {
 		Path:     "/",
 		Domain:   env.CookieDomain,
 		MaxAge:   86400 * 7,
-		//HttpOnly: true,
-		//Secure:   true,
-		SameSite: http.SameSiteLaxMode,
+		HttpOnly: true,
+		Secure:   true,
+		//SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteNoneMode,
 	}
 	//var session = sessions.NewSession(store, env.SessionsName)
 
