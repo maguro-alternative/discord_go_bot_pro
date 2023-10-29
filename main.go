@@ -35,7 +35,7 @@ func main() {
 		MaxAge:   86400 * 7,
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteLaxMode,
 	}
 	//var session = sessions.NewSession(store, env.SessionsName)
 
