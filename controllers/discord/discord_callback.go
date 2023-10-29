@@ -39,6 +39,7 @@ func (h *DiscordCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	}
 	// 2. 認可ページからリダイレクトされてきたときに送られてくるstateパラメータ
 	if r.URL.Query().Get("state") != state {
+		fmt.Println(reflect.TypeOf(session.Values["state"]))
 		session.Values["state"] = ""
 		h.svc.CookieStore.Save(r, w, session)
 		panic("state is not match")
