@@ -8,7 +8,7 @@ import (
 
 	"github.com/maguro-alternative/discord_go_bot/model/envconfig"
 	serverHandler "github.com/maguro-alternative/discord_go_bot/server_handler"
-	//"github.com/maguro-alternative/discord_go_bot/server_handler/middleware"
+	"github.com/maguro-alternative/discord_go_bot/server_handler/middleware"
 	"github.com/maguro-alternative/discord_go_bot/service"
 	controllersDiscord "github.com/maguro-alternative/discord_go_bot/controllers/discord"
 
@@ -16,7 +16,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/gorilla/sessions"
-	//"github.com/justinas/alice"
+	"github.com/justinas/alice"
 )
 
 func NewRouter(
@@ -51,14 +51,10 @@ func NewRouter(
 
 	// register routes
 	mux := http.NewServeMux()
-	mux.Handle("/", serverHandler.NewIndexHandler(indexService))
-	mux.Handle("/discord-auth-check", testRouter.NewAuthCheckHandler(indexService))
-	mux.Handle("/discord/auth", controllersDiscord.NewDiscordAuthHandler(discordOAuth2Service))
-	mux.Handle("/discord-callback/", controllersDiscord.NewDiscordCallbackHandler(discordOAuth2Service))
-	//middleChain := alice.New(middleware.CORS)
-	//mux.Handle("/", middleChain.Then(serverHandler.NewIndexHandler(indexService)))
-	//mux.Handle("/discord-auth-check", middleChain.Then(testRouter.NewAuthCheckHandler(indexService)))
-	//mux.Handle("/discord/auth", middleChain.Then(controllersDiscord.NewDiscordAuthHandler(discordOAuth2Service)))
-	//mux.Handle("/discord-callback/", middleChain.Then(controllersDiscord.NewDiscordCallbackHandler(discordOAuth2Service)))
+	middleChain := alice.New(middleware.CORS)
+	mux.Handle("/", middleChain.Then(serverHandler.NewIndexHandler(indexService)))
+	mux.Handle("/discord-auth-check", middleChain.Then(testRouter.NewAuthCheckHandler(indexService)))
+	mux.Handle("/discord/auth", middleChain.Then(controllersDiscord.NewDiscordAuthHandler(discordOAuth2Service)))
+	mux.Handle("/discord-callback/", middleChain.Then(controllersDiscord.NewDiscordCallbackHandler(discordOAuth2Service)))
 	return mux
 }
