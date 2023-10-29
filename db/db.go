@@ -61,9 +61,9 @@ func NewPostgresDB(path string) (*sqlx.DB, error) {
 	}
 
 	// テーブルの作成
-	//if _, err := DB.Exec(schema); err != nil {
-	//return nil, err
-	//}
+	if _, err := db.Exec(schema); err != nil {
+		return nil, err
+	}
 
 	return db, nil
 }
