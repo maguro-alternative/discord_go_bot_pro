@@ -1,8 +1,6 @@
 package controllersDiscord
 
 import (
-	//"encoding/json"
-	//"log"
 	"encoding/gob"
 	"net/http"
 

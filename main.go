@@ -31,16 +31,16 @@ func main() {
 	var store = sessions.NewCookieStore([]byte(env.SessionsSecret))
 	store.Options = &sessions.Options{
 		Path:     "/",
-		Domain:   env.CookieDomain,
 		MaxAge:   86400 * 7,
 		HttpOnly: true,
 		Secure:   true,
-		//SameSite: http.SameSiteLaxMode,
 		SameSite: http.SameSiteNoneMode,
 	}
-	//var session = sessions.NewSession(store, env.SessionsName)
-
-	//dbPath := env.DatabaseURL
+	// ドメインが設定されている場合はセット
+	if env.CookieDomain != "" {
+		store.Options.Domain = env.CookieDomain
+	}
+	// DBの接続
 	dbPath := env.DatabaseType + "://" + env.DatabaseHost + ":" + env.DatabasePort + "/" + env.DatabaseName + "?" + "user=" + env.DatabaseUser + "&" + "password=" + env.DatabasePassword + "&" + "sslmode=disable"
 	db, err := db.NewPostgresDB(dbPath)
 	if err != nil {

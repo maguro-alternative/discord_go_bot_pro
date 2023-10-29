@@ -13,7 +13,7 @@ import (
 // RetryLimit はリトライする最大回数を指定します。
 const retryLimit = 3
 
-// RetryInterval はリトライの間隔を指定します（ミリ秒単位）。
+// RetryInterval はリトライの間隔を指定します。
 const retryInterval = 1 // 1秒
 
 type Env struct {
@@ -39,6 +39,7 @@ func NewEnv() (*Env, error) {
 	EnvGet := func(ctx context.Context) error {
 		operation := func() error {
 			err := godotenv.Load(".env")
+			// .envファイルがない場合は無視する
 			if err.Error() == "open .env: no such file or directory" {
 				return nil
 			}

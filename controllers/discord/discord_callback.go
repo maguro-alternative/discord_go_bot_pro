@@ -77,10 +77,6 @@ func (h *DiscordCallbackHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		panic(err)
 	}
 	log.Println(user)
-	// 4. ユーザー情報をDBに保存
-	//h.svc.CreateUser(user)
-	// 5. ログイン処理
-	//h.svc.Login(w, r, user)
-	// 6. ログイン後のページに遷移
+	// 4. ログイン後のページに遷移
 	http.Redirect(w, r, h.svc.Env.FrontUrl + "/test-user", http.StatusFound)
 }
