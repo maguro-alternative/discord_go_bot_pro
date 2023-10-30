@@ -255,7 +255,7 @@ func (h *botHandlerDB) OnMessageCreate(s *discordgo.Session, m *discordgo.Messag
 また、```Secure```を```true```に設定するため、httpsでの接続が必要です。  
 フロントとサーバーのドメインが同じ場合は、```SameSite```を```http.SameSiteLaxMode```に、```store.Options.Domain```にドメインを設定してください。  
 Cookieがファーストパーティー製と認識され、対応ブラウザが増えます。  
-(サーバー側のサブドメインも付けておくと良いです。)
+(サーバー側のサブドメインも付けておくと良いです。)  
 (例:```store.Options.Domain = "aaaaasas.koyeb.app"```)
 
 </details>
@@ -265,4 +265,8 @@ Cookieがファーストパーティー製と認識され、対応ブラウザ�
 ```cors```ミドルウエアはデフォルトで追加されています。(これがないとサーバーとフロントエンドの接続ができません。)
 
 # フロントエンドとの接続
+以下のリポジトリを使用します。  
+使用技術はReact.ts+Viteです。  
+
+https://github.com/maguro-alternative/discordgo_bot_front  
 
