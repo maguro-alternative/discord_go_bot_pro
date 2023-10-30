@@ -2,7 +2,7 @@
 discordgoを使った多機能Bot+サーバーサイドのテンプレートです。  
 httpサーバーの立ち上げ、各機能のハンドラーの登録、コマンドの登録などができます。  
 また、データベースにはPostgreSQLを使っていますが、sqlite3に変更することもできます。  
-~~OAuth2の認証もできます。~~(実装中です)
+OAuth2の認証もできます。
 # 使い方
 本リポジトリをクローンして、以下のコマンドを実行してください。
 ```bash
@@ -16,6 +16,14 @@ PGPASSWORD=PostgreSQLのパスワード
 PGDATABASE=PostgreSQLのデータベース名
 PGHOST=PostgreSQLのホスト名
 PGPORT=PostgreSQLのポート番号
+PORT=httpサーバーのポート番号
+SESSIONS_SECRET=セッションのシークレットキー
+DISCORD_CLIENT_ID=DiscordのクライアントID
+DISCORD_CLIENT_SECRET=Discordのクライアントシークレット
+FRONTEND_URL=フロントエンドのURL
+SERVER_URL=サーバーのURL
+SESSIONS_NAME=セッションの名前
+COOKIE_DOMAIN=クッキーのドメイン
 ```
 sqlite3を使う場合は、```main.go```の
 ```env
@@ -23,14 +31,14 @@ dbPath := env.DatabaseType + "://" + env.DatabaseHost + ":" + env.DatabasePort +
 ```
 と
 ```
-indexDB, err := db.NewPostgresDB(dbPath)
+db, err := db.NewPostgresDB(dbPath)
 ```
 をそれぞれ
 ```
 dbPath := ".sqlite3/todo.db"
 ```
 ```
-indexDB, err := db.NewSqliteDB(dbPath)
+db, err := db.NewSqliteDB(dbPath)
 ```
 に変更してください。
 
@@ -104,7 +112,7 @@ main.go
 	// NewCommandHandlerの第二引数を空にすることで、グローバルでの使用を許可する
 	commandHandler := botHandler.NewCommandHandler(discord, "")
 	// 追加したいコマンドをここに追加
-	commandHandler.CommandRegister(commands.PingCommand())  // pingコマンドの追加
+	commandHandler.CommandRegister(commands.PingCommand(db))  // pingコマンドの追加
 	commandHandlers = append(commandHandlers, commandHandler)
 ```
 
@@ -154,8 +162,7 @@ func RegisterHandlers(s *discordgo.Session) {
 
 # データベースの扱い方
 ```db```パッケージにデータベースの接続を行う関数があります。  
-```DB```はグローバルで宣言しているので、importすればどこでも使用可能です。  
-```db```パッケージの```db.go```を参照してください。
+Botのハンドラーやhttpサーバーのハンドラー内で使用することができます。  
 
 <details>
 <summary>サンプルコード</summary>
@@ -180,31 +187,41 @@ package botHandler
 
 import (
 	"fmt"
+	"context"
 
-    "github.com/maguro-alternative/discord_go_bot/db"
+	"github.com/maguro-alternative/discord_go_bot/db/table"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-    // メッセージが作成されたときに実行する処理
-	//u := m.Author
+type PGTable struct {
+	SchemaName string `db:"schemaname"`
+	TableName  string `db:"tablename"`
+	TableOwner string `db:"tableowner"`
+}
 
-    fmt.Println(m.Content)
-    err := db.PingDB()
-    if err != nil {
-		fmt.Println(err)
-	}
-    table, err := db.TablesCheck()
+func (h *botHandlerDB) OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	var pgTables []table.PGTable
+
+	ctx := context.Background()
+
+	fmt.Println(m.Content)
+	fmt.Printf("(%%v)  %v\n", h.db)
+	err := h.db.DBPing(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-    fmt.Println(table)
+	err = h.db.CheckTables(ctx, pgTables)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(pgTables)
 
-    if(m.Author.Bot == false){
-        s.ChannelMessageSend(m.ChannelID, m.Content)
-    }
+	if m.Author.Bot == false {
+		s.ChannelMessageSend(m.ChannelID, m.Content)
+	}
 }
+
 ```
 
 </details>
