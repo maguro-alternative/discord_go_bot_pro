@@ -225,3 +225,44 @@ func (h *botHandlerDB) OnMessageCreate(s *discordgo.Session, m *discordgo.Messag
 ```
 
 </details>
+
+# OAuth2および認証情報の保存
+事前にDiscordの開発者ポータルでアプリケーションを作成し、クライアントIDとクライアントシークレットを取得してください。  
+```controllers```フォルダー内の```discord```にOAuth2の認証を行う関数があります。  
+```/discord/auth```にアクセスすることで、認証を行うことができます。    
+認証が成功すると、```/discord-callback/```にリダイレクトされ、クッキーに認証情報が保存されます。(コールバックURLの設定はDiscordの開発者ポータルで行ってください。)  
+認証情報の確認は```/discord-auth-check```で確認できます。
+
+<details>
+<summary>Cookieの設定について</summary>
+
+```go:main.go
+	var store = sessions.NewCookieStore([]byte(env.SessionsSecret))
+	store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   86400 * 7,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
+	}
+	// ドメインが設定されている場合はセット
+	if env.CookieDomain != "" {
+		store.Options.Domain = env.CookieDomain
+	}
+```
+
+フロントエンドとの接続のため、```SameSite```を```http.SameSiteNoneMode```に設定しています。  
+また、```Secure```を```true```に設定するため、httpsでの接続が必要です。  
+フロントとサーバーのドメインが同じ場合は、```SameSite```を```http.SameSiteLaxMode```に、```store.Options.Domain```にドメインを設定してください。  
+Cookieがファーストパーティー製と認識され、対応ブラウザが増えます。  
+(サーバー側のサブドメインも付けておくと良いです。)
+(例:```store.Options.Domain = "aaaaasas.koyeb.app"```)
+
+</details>
+
+# ミドルウエアの追加
+```middlewares```フォルダーにミドルウエアファイルを追加してください。
+```cors```ミドルウエアはデフォルトで追加されています。(これがないとサーバーとフロントエンドの接続ができません。)
+
+# フロントエンドとの接続
+
