@@ -1,8 +1,9 @@
 package commands
 
 import (
-	"github.com/jmoiron/sqlx"
 	"fmt"
+
+	"github.com/jmoiron/sqlx"
 
 	"github.com/bwmarrin/discordgo"
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
@@ -20,8 +21,8 @@ func PingCommand(db *sqlx.DB) *botRouter.Command {
 	return &botRouter.Command{
 		Name:        "ping",
 		Description: "Pong!",
-		Options:     []*discordgo.ApplicationCommandOption{},
-		Executor:    exec.handlePing,
+		Options: []*discordgo.ApplicationCommandOption{},
+		Executor: exec.handlePing,
 	}
 }
 

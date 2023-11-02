@@ -1,9 +1,10 @@
 package commands
 
 import (
-	"github.com/jmoiron/sqlx"
 	"fmt"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 
 	"github.com/bwmarrin/discordgo"
 	botRouter "github.com/maguro-alternative/discord_go_bot/bot_handler/bot_router"
@@ -25,8 +26,15 @@ func RecordCommand(db *sqlx.DB) *botRouter.Command {
 	return &botRouter.Command{
 		Name:        "test_start_record",
 		Description: "録音を開始します",
-		Options:     []*discordgo.ApplicationCommandOption{},
-		Executor:    exec.recordVoice,
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Name:        "second",
+				Description: "録音する秒数を指定します",
+				Type:        discordgo.ApplicationCommandOptionInteger,
+				Required:    true,
+			},
+		},
+		Executor: exec.recordVoice,
 	}
 }
 
@@ -100,8 +108,9 @@ func (h *commandHandlerDB) recordVoice(s *discordgo.Session, i *discordgo.Intera
 			responsText(s, i, "ボイスチャンネルに入ってください")
 			return
 		}
+		recordSecond := i.ApplicationCommandData().Options[0].IntValue()
 		go func() {
-			time.Sleep(10 * time.Second)
+			time.Sleep(time.Duration(recordSecond) * time.Second)
 			close(v.OpusRecv)
 			v.Close()
 		}()

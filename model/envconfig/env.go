@@ -40,7 +40,7 @@ func NewEnv() (*Env, error) {
 		operation := func() error {
 			err := godotenv.Load(".env")
 			// .envファイルがない場合は無視する
-			if err.Error() == "open .env: no such file or directory" {
+			if err != nil && err.Error() != "open .env: no such file or directory" {
 				return nil
 			}
 			return errors.WithStack(err)
