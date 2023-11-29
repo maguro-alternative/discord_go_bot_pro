@@ -89,31 +89,32 @@ func (h *commandHandlerDB) recordVoice(s *discordgo.Session, i *discordgo.Intera
 
 		コマンドの実行結果を返す
 	*/
-	if i.Interaction.ApplicationCommandData().Name == "test_start_record" {
-		vs, err := s.State.VoiceState(i.GuildID, i.Interaction.Member.User.ID)
-		if err != nil {
-			fmt.Println("failed to find voice state:", err)
-			responsText(s, i, "ボイスチャンネルに接続していません")
-			return
-		}
-		if vs == nil {
-			responsText(s, i, "ボイスチャンネルに接続していません")
-			return
-		}
-		responsText(s, i, "録音を開始します <#"+vs.ChannelID+">")
-		v, err := s.ChannelVoiceJoin(i.GuildID, vs.ChannelID, true, false)
-		//fmt.Println(v)
-		if err != nil {
-			fmt.Println("failed to join voice channel:", err)
-			responsText(s, i, "ボイスチャンネルに入ってください")
-			return
-		}
-		recordSecond := i.ApplicationCommandData().Options[0].IntValue()
-		go func() {
-			time.Sleep(time.Duration(recordSecond) * time.Second)
-			close(v.OpusRecv)
-			v.Close()
-		}()
-		handleVoice(v.OpusRecv)
+	if i.Interaction.ApplicationCommandData().Name != "test_start_record" {
+		return
 	}
+	vs, err := s.State.VoiceState(i.GuildID, i.Interaction.Member.User.ID)
+	if err != nil {
+		fmt.Println("failed to find voice state:", err)
+		responsText(s, i, "ボイスチャンネルに接続していません")
+		return
+	}
+	if vs == nil {
+		responsText(s, i, "ボイスチャンネルに接続していません")
+		return
+	}
+	responsText(s, i, "録音を開始します <#"+vs.ChannelID+">")
+	v, err := s.ChannelVoiceJoin(i.GuildID, vs.ChannelID, true, false)
+	//fmt.Println(v)
+	if err != nil {
+		fmt.Println("failed to join voice channel:", err)
+		responsText(s, i, "ボイスチャンネルに入ってください")
+		return
+	}
+	recordSecond := i.ApplicationCommandData().Options[0].IntValue()
+	go func() {
+		time.Sleep(time.Duration(recordSecond) * time.Second)
+		close(v.OpusRecv)
+		v.Close()
+	}()
+	handleVoice(v.OpusRecv)
 }
