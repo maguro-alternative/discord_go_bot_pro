@@ -11,7 +11,7 @@ import (
 
 // A TODOService implements CRUD of TODO entities.
 type IndexService struct {
-	db             *sqlx.DB
+	DB             *sqlx.DB
 	CookieStore    *sessions.CookieStore
 	DiscordSession *discordgo.Session
 	Env            *envconfig.Env
@@ -25,7 +25,7 @@ func NewIndexService(
 	env *envconfig.Env,
 ) *IndexService {
 	return &IndexService{
-		db:             db,
+		DB:             db,
 		CookieStore:    cookieStore,
 		DiscordSession: discordSession,
 		Env:            env,
